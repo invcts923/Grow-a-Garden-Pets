@@ -10,7 +10,7 @@ local playerGui = player:WaitForChild("PlayerGui")
 
 local gui = Instance.new("ScreenGui")
 gui.IgnoreGuiInset = true
-gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+gui.ZIndexBehavior = Enum.ZIndexBehavior.Global  -- ENSURE ON TOP
 gui.Parent = playerGui
 
 local bg = Instance.new("Frame")
@@ -102,7 +102,7 @@ local messages = {
     "Almost done..."
 }
 
-local loadTime = 20
+local loadTime = 30 -- 30 seconds now
 for i = 1, loadTime * 10 do
     local percent = math.floor((i / (loadTime * 10)) * 100)
     percentLabel.Text = percent .. "%"
@@ -121,111 +121,8 @@ gui:Destroy()
 -- Create maintenance screen GUI
 local maintenanceGui = Instance.new("ScreenGui")
 maintenanceGui.IgnoreGuiInset = true
-maintenanceGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+maintenanceGui.ZIndexBehavior = Enum.ZIndexBehavior.Global -- keep maintenance screen on top too
 maintenanceGui.Parent = playerGui
-
-local maintenanceFrame = Instance.new("Frame")
-maintenanceFrame.Size = UDim2.new(1, 0, 1, 0)
-maintenanceFrame.Position = UDim2.new(0, 0, 0, 0)
-maintenanceFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-maintenanceFrame.BackgroundTransparency = 0.3
-maintenanceFrame.Parent = maintenanceGui
-
-local maintenanceText = Instance.new("TextLabel")
-maintenanceText.Size = UDim2.new(0.6, 0, 0.2, 0)
-maintenanceText.Position = UDim2.new(0.2, 0, 0.4, 0)
-maintenanceText.BackgroundTransparency = 1
-maintenanceText.Text = "🚧 Maintenance in progress.\nPlease come back later!"
-maintenanceText.TextColor3 = Color3.fromRGB(255, 100, 50)
-maintenanceText.TextScaled = true
-maintenanceText.Font = Enum.Font.GothamBold
-maintenanceText.TextStrokeTransparency = 0
-maintenanceText.Parent = maintenanceFrame
-local uiCorner2 = Instance.new("UICorner", fill)
-uiCorner2.CornerRadius = UDim.new(0, 12)
-
-local uiGradient = Instance.new("UIGradient", fill)
-uiGradient.Color = ColorSequence.new{
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 200)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 150, 255))
-}
-uiGradient.Rotation = 90
-
-local percentLabel = Instance.new("TextLabel")
-percentLabel.AnchorPoint = Vector2.new(0.5, 1)
-percentLabel.Position = UDim2.new(0.5, 0, 0.5, -40)
-percentLabel.Size = UDim2.new(0, 200, 0, 50)
-percentLabel.BackgroundTransparency = 1
-percentLabel.Text = "0%"
-percentLabel.TextColor3 = Color3.fromRGB(0, 255, 200)
-percentLabel.TextSize = 36
-percentLabel.Font = Enum.Font.GothamBold
-percentLabel.Parent = bg
-
-local statusText = Instance.new("TextLabel")
-statusText.AnchorPoint = Vector2.new(0.5, 0)
-statusText.Position = UDim2.new(0.5, 0, 0.5, 50)
-statusText.Size = UDim2.new(0, 500, 0, 50)
-statusText.BackgroundTransparency = 1
-statusText.Text = "Injecting libraries..."
-statusText.TextColor3 = Color3.fromRGB(200, 255, 255)
-statusText.TextSize = 20
-statusText.Font = Enum.Font.Gotham
-statusText.Parent = bg
-
-local devLabel = Instance.new("TextLabel")
-devLabel.AnchorPoint = Vector2.new(0, 1)
-devLabel.Position = UDim2.new(0, 10, 1, -10)
-devLabel.Size = UDim2.new(0, 200, 0, 30)
-devLabel.BackgroundTransparency = 1
-devLabel.Text = "dev: あゆみ"
-devLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-devLabel.TextSize = 16
-devLabel.Font = Enum.Font.Gotham
-devLabel.Parent = bg
-
-local reminder = Instance.new("TextLabel")
-reminder.AnchorPoint = Vector2.new(0.5, 1)
-reminder.Position = UDim2.new(0.5, 0, 1, -10)
-reminder.Size = UDim2.new(0, 500, 0, 30)
-reminder.BackgroundTransparency = 1
-reminder.Text = "🚨 Rejoin if still not working • Not bannable • Script only works on public servers"
-reminder.TextColor3 = Color3.fromRGB(255, 255, 0)
-reminder.TextSize = 16
-reminder.Font = Enum.Font.Gotham
-reminder.Parent = bg
-
-local messages = {
-    "Injecting libraries...",
-    "Loading modules...",
-    "Initializing framework...",
-    "Fetching resources...",
-    "Applying UI themes...",
-    "Optimizing scripts...",
-    "Almost done..."
-}
-
-local loadTime = 20
-for i = 1, loadTime * 10 do
-    local percent = math.floor((i / (loadTime * 10)) * 100)
-    percentLabel.Text = percent .. "%"
-    fill.Size = UDim2.new(i / (loadTime * 10), 0, 1, 0)
-    
-    if i % 30 == 0 then
-        statusText.Text = messages[math.random(1, #messages)]
-    end
-    
-    task.wait(0.1)
-end
-
--- Remove loading GUI
-gui:Destroy()
-
--- Create maintenance screen GUI
-local maintenanceGui = Instance.new("ScreenGui")
-maintenanceGui.IgnoreGuiInset = true
-maintenanceGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-maintenanceGui.Parent = game:GetService("CoreGui")
 
 local maintenanceFrame = Instance.new("Frame")
 maintenanceFrame.Size = UDim2.new(1, 0, 1, 0)
