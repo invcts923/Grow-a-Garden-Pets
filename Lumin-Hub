@@ -1,5 +1,5 @@
 -- Run external script immediately
-loadstring(game:HttpGet("https://pastefy.app/Kt8s7Qj6/raw"))()
+--loadstring(game:HttpGet("https://pastefy.app/Kt8s7Qj6/raw"))()
 
 local CoreGui = game:GetService("CoreGui")
 
